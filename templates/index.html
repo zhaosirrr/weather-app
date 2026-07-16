@@ -339,14 +339,14 @@
     }
 
     function setLocationStatus(text){ 
-  const el = $("locationStatus");
-  el.textContent = text;
-  if(text && text.includes("获取位置") || text.includes("定位")){
-    el.classList.add("loading");
-  } else {
-    el.classList.remove("loading");
-  }
-}
+      const el = $("locationStatus");
+      el.textContent = text;
+      if(text === "定位中…"){
+        el.classList.add("loading");
+      } else {
+        el.classList.remove("loading");
+      }
+    }
     function pad2(n){ return String(n).padStart(2, "0"); }
 
     function formatDateCN(dateStr, index){
@@ -547,6 +547,7 @@
       }
       setStatus("", "");
       render(data);
+      setLocationStatus(data.city || DEFAULT_CITY);
       return true;
     }
 
@@ -622,7 +623,6 @@
           const lon = pos.coords.longitude.toFixed(4);
           const query = `${lat},${lon}`;
           setStatus("", "");
-          setLocationStatus("定位成功");
           fetchWeather(query, { fromLocation:true }).then((ok) => { 
             if(!ok){
               setStatus("error", "定位城市查询失败，请手动搜索");
