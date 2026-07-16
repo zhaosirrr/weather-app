@@ -118,7 +118,7 @@
     .search-bar button{ width:24px; height:24px; border:0; border-radius:50%; background:rgba(255,255,255,.08); color:rgba(255,255,255,.85); display:grid; place-items:center; cursor:pointer; transition:transform .18s ease, background .18s ease; }
     .search-bar button:hover{ background:rgba(255,255,255,.18); transform:scale(1.04); }
 
-    .hero{ text-align:center; padding:36px 0 32px; text-shadow:0 10px 34px rgba(0,0,0,.22); }
+    .hero{ text-align:center; padding:36px 0 32px; text-shadow:0 10px 34px rgba(0,0,0,.22); position:relative; z-index:3; }
     .city-name{ font-size:clamp(32px, 8vw, 58px); line-height:1.06; letter-spacing:-.04em; font-weight:500; }
     .temp-row{ display:flex; justify-content:center; align-items:flex-start; margin-top:10px; }
     .temp-num{ font-size:clamp(108px, 26vw, 188px); line-height:.88; font-weight:200; letter-spacing:normal; font-variant-numeric:tabular-nums; }
@@ -529,7 +529,6 @@
       $("humidity").textContent = (data.current?.humidity ?? "--") + "%";
       $("wind").textContent = data.current?.wind_kph != null ? Math.round(data.current.wind_kph) : "--";
       $("advice").textContent = makeAdvice(theme, temp);
-      $("todayBadge").style.display = "inline-flex";
       setTheme(theme, data.localtime);
 
       const fw = $("forecast");
