@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import random
 from datetime import datetime
 
 import requests
@@ -11,6 +12,123 @@ app = Flask(__name__)
 # 说明：你给的 Key 直接写在这里了，方便你本地直接跑。
 # 如果你后续想更安全一些，可以把它放到环境变量 WEATHERAPI_KEY。
 DEFAULT_API_KEY = "60c6d521f8b543c4a3372318261507"
+
+
+TAROT_CARDS = {
+    "major": [
+        {"name": "愚人", "name_en": "The Fool", "meaning": "新的开始、冒险、纯真", "reversed": "鲁莽、冒险失败", "keywords": ["新起点", "勇气", "自由"]},
+        {"name": "魔术师", "name_en": "The Magician", "meaning": "创造力、技能、意志力", "reversed": "欺骗、操纵", "keywords": ["创造", "能力", "自信"]},
+        {"name": "女祭司", "name_en": "The High Priestess", "meaning": "直觉、智慧、神秘", "reversed": "隐藏的动机、表面化", "keywords": ["直觉", "智慧", "神秘"]},
+        {"name": "皇后", "name_en": "The Empress", "meaning": "丰饶、母性、创造力", "reversed": "依赖、过度保护", "keywords": ["丰盛", "滋养", "美"]},
+        {"name": "皇帝", "name_en": "The Emperor", "meaning": "权威、结构、父性", "reversed": "专制、僵化", "keywords": ["权威", "稳定", "领导"]},
+        {"name": "教皇", "name_en": "The Hierophant", "meaning": "传统、信仰、教导", "reversed": "非传统、挑战权威", "keywords": ["传统", "信仰", "指引"]},
+        {"name": "恋人", "name_en": "The Lovers", "meaning": "爱情、和谐、选择", "reversed": "不和谐、错误选择", "keywords": ["爱情", "和谐", "选择"]},
+        {"name": "战车", "name_en": "The Chariot", "meaning": "胜利、意志、控制", "reversed": "失控、攻击性", "keywords": ["胜利", "意志", "前进"]},
+        {"name": "力量", "name_en": "Strength", "meaning": "勇气、耐心、内心力量", "reversed": "软弱、自我怀疑", "keywords": ["勇气", "耐心", "坚韧"]},
+        {"name": "隐士", "name_en": "The Hermit", "meaning": "内省、孤独、智慧", "reversed": "孤立、拒绝帮助", "keywords": ["内省", "独处", "智慧"]},
+        {"name": "命运之轮", "name_en": "Wheel of Fortune", "meaning": "变化、命运、转折点", "reversed": "抗拒变化、厄运", "keywords": ["转变", "机遇", "命运"]},
+        {"name": "正义", "name_en": "Justice", "meaning": "公正、真理、因果", "reversed": "不公正、偏见", "keywords": ["公正", "真理", "平衡"]},
+        {"name": "倒吊人", "name_en": "The Hanged Man", "meaning": "牺牲、等待、新视角", "reversed": "拖延、抗拒", "keywords": ["等待", "放下", "新视角"]},
+        {"name": "死神", "name_en": "Death", "meaning": "结束、转变、重生", "reversed": "抗拒变化、停滞", "keywords": ["结束", "蜕变", "重生"]},
+        {"name": "节制", "name_en": "Temperance", "meaning": "平衡、耐心、调和", "reversed": "过度、失衡", "keywords": ["平衡", "耐心", "调和"]},
+        {"name": "恶魔", "name_en": "The Devil", "meaning": "束缚、欲望、阴影", "reversed": "解脱、面对恐惧", "keywords": ["欲望", "束缚", "觉醒"]},
+        {"name": "塔", "name_en": "The Tower", "meaning": "突变、破坏、觉醒", "reversed": "恐惧变化、逃避", "keywords": ["突变", "觉醒", "释放"]},
+        {"name": "星星", "name_en": "The Star", "meaning": "希望、灵感、宁静", "reversed": "失望、缺乏信心", "keywords": ["希望", "灵感", "治愈"]},
+        {"name": "月亮", "name_en": "The Moon", "meaning": "幻觉、潜意识、不安", "reversed": "混乱、恐惧", "keywords": ["直觉", "梦境", "神秘"]},
+        {"name": "太阳", "name_en": "The Sun", "meaning": "快乐、成功、活力", "reversed": "消极、延迟成功", "keywords": ["快乐", "成功", "活力"]},
+        {"name": "审判", "name_en": "Judgement", "meaning": "重生、觉醒、召唤", "reversed": "自我怀疑、拒绝召唤", "keywords": ["觉醒", "重生", "召唤"]},
+        {"name": "世界", "name_en": "The World", "meaning": "完成、整合、成就", "reversed": "未完成、缺乏 closure", "keywords": ["完成", "成就", "整合"]},
+    ]
+}
+
+FORTUNE_MESSAGES = {
+    "sunny": [
+        "今日阳光明媚，好运如影随形，大胆追逐你的梦想吧！",
+        "阳光普照，万物生长，今日是展现自我的绝佳时机。",
+        "晴空万里，心情舒畅，好事即将发生在你身上。",
+        "阳光赐予你无限能量，今日行动必有收获。",
+        "明媚的一天，适合开启新计划，成功率超高！",
+    ],
+    "cloudy": [
+        "云层虽厚，但阳光总在风雨后，保持耐心等待转机。",
+        "多云天气暗示着变化，保持灵活应对各种可能性。",
+        "云层遮挡不了你的光芒，今日低调行事反而更有收获。",
+        "云淡风轻，适合沉思和规划，为未来积蓄力量。",
+        "看似平淡的一天，却藏着意想不到的惊喜。",
+    ],
+    "rainy": [
+        "雨水洗涤心灵，过去的烦恼将被冲刷干净，迎接新生。",
+        "雨天带来滋润，适合反思和整理，为明天做好准备。",
+        "细雨绵绵，情感丰富的一天，适合与重要的人交流。",
+        "雨天是积蓄能量的时刻，耐心等待彩虹出现。",
+        "雨水象征着净化，今日是放下负担的好时机。",
+    ],
+    "snowy": [
+        "白雪皑皑，纯洁无瑕，新的开始正在酝酿之中。",
+        "雪花纷飞，浪漫的一天，适合与爱的人共度时光。",
+        "冬日雪景，沉静内敛，适合内省和自我提升。",
+        "银装素裹，世界焕然一新，你的运势也将迎来转机。",
+        "雪天带来宁静，适合思考人生的方向。",
+    ],
+    "storm": [
+        "风暴来临，旧事物将被摧毁，新秩序即将建立。",
+        "风雨交加，考验来临，但这正是你展现勇气的时刻。",
+        "暴风雨过后是彩虹，今日的挑战是明日的勋章。",
+        "雷电交加，能量激荡，适合做出重大决定。",
+        "风暴象征着变革，勇敢面对，你将获得成长。",
+    ],
+    "fog": [
+        "迷雾笼罩，真相尚未显现，保持警惕，耐心等待。",
+        "朦胧之中，直觉更加敏锐，相信你的第六感。",
+        "雾天提醒你放慢脚步，看清方向再前进。",
+        "迷雾散去后将是清晰的道路，今日宜静观其变。",
+        "朦胧的一天，适合冥想和自我探索。",
+    ],
+}
+
+
+def get_tarot_fortune(weather_condition, temp, date_str):
+    random.seed(date_str)
+    
+    card = random.choice(TAROT_CARDS["major"])
+    
+    theme_key = "cloudy"
+    if weather_condition:
+        wc = weather_condition.lower()
+        if "晴" in weather_condition or "sun" in wc or "clear" in wc:
+            theme_key = "sunny"
+        elif "雨" in weather_condition or "rain" in wc or "drizzle" in wc:
+            theme_key = "rainy"
+        elif "雪" in weather_condition or "snow" in wc:
+            theme_key = "snowy"
+        elif "雷" in weather_condition or "暴" in wc or "thunder" in wc:
+            theme_key = "storm"
+        elif "雾" in weather_condition or "霾" in wc or "fog" in wc or "mist" in wc:
+            theme_key = "fog"
+    
+    message = random.choice(FORTUNE_MESSAGES[theme_key])
+    
+    luck_score = 50
+    if theme_key == "sunny":
+        luck_score = 75 + random.randint(0, 20)
+    elif theme_key == "rainy":
+        luck_score = 55 + random.randint(-10, 15)
+    elif theme_key == "storm":
+        luck_score = 45 + random.randint(-5, 20)
+    else:
+        luck_score = 55 + random.randint(-15, 20)
+    
+    luck_score = max(20, min(95, luck_score))
+    
+    return {
+        "card": card["name"],
+        "card_en": card["name_en"],
+        "meaning": card["meaning"],
+        "keywords": card["keywords"],
+        "message": message,
+        "luck_score": luck_score,
+        "theme": theme_key,
+    }
 
 CITY_NAME_MAP = {
     "北京": "Beijing",
@@ -571,6 +689,12 @@ def api_weather():
                     "chance_of_rain": safe_int(h.get("chance_of_rain")),
                 }
             )
+
+    # 塔罗运势
+    condition_text = result["current"]["condition"]["text"] if result["current"]["condition"] else ""
+    temp_c = result["current"]["temp_c"]
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    result["fortune"] = get_tarot_fortune(condition_text, temp_c, date_str)
 
     return jsonify(result)
 

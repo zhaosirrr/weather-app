@@ -201,6 +201,20 @@
     .aqi-pointer{ position:absolute; top:0; left:0; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 6px 18px rgba(0,0,0,.28); border:3px solid rgba(255,255,255,.72); transform:translate(-50%, -3px); }
     .aqi-desc{ margin-top:12px; color:rgba(255,255,255,.68); font-size:13px; line-height:1.45; }
 
+    .fortune-content{ display:flex; flex-direction:column; gap:14px; }
+    .fortune-card-info{ display:flex; align-items:baseline; gap:10px; }
+    .fortune-card-name{ font-size:24px; font-weight:700; color:rgba(255,255,255,.95); letter-spacing:-.02em; }
+    .fortune-card-en{ font-size:13px; color:rgba(255,255,255,.45); font-weight:500; letter-spacing:.05em; }
+    .fortune-meaning{ font-size:15px; color:rgba(255,255,255,.72); font-weight:500; line-height:1.5; }
+    .fortune-keywords{ display:flex; flex-wrap:wrap; gap:8px; }
+    .keyword-tag{ padding:5px 12px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.15); color:rgba(255,255,255,.78); font-size:12px; font-weight:600; letter-spacing:.02em; }
+    .fortune-message{ padding:14px 16px; border-radius:18px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.10); color:rgba(255,255,255,.88); font-size:15px; line-height:1.6; font-style:italic; }
+    .fortune-score-section{ display:flex; align-items:center; gap:12px; }
+    .fortune-score-label{ font-size:13px; color:rgba(255,255,255,.58); font-weight:600; flex-shrink:0; }
+    .fortune-score-bar-bg{ flex:1; height:8px; border-radius:999px; background:rgba(255,255,255,.15); overflow:hidden; }
+    .fortune-score-bar{ height:100%; border-radius:999px; transition:width .6s ease, background .3s ease; }
+    .fortune-score-value{ font-size:18px; font-weight:700; color:rgba(255,255,255,.92); min-width:40px; text-align:right; }
+
     .mini-summary{ min-height:100%; display:flex; flex-direction:column; justify-content:space-between; gap:18px; }
     .summary-main{ display:flex; align-items:center; gap:15px; }
     .summary-emoji{ font-size:54px; filter:drop-shadow(0 10px 20px rgba(0,0,0,.18)); }
@@ -320,6 +334,32 @@
             <div class="aqi-scale"></div>
           </div>
           <div class="aqi-desc" id="aqiDesc">当前 AQI 24，等级为优，空气质量令人舒适。</div>
+        </div>
+      </article>
+
+      <article class="glass-card" id="fortuneCard" style="display:none;">
+        <div class="card-inner">
+          <div class="card-title"><span><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 今日运势</span></div>
+          <div class="fortune-content">
+            <div class="fortune-card-info">
+              <div class="fortune-card-name" id="fortuneCardName">愚人</div>
+              <div class="fortune-card-en" id="fortuneCardEn">The Fool</div>
+            </div>
+            <div class="fortune-meaning" id="fortuneMeaning">新的开始、冒险、纯真</div>
+            <div class="fortune-keywords" id="fortuneKeywords">
+              <span class="keyword-tag">新起点</span>
+              <span class="keyword-tag">勇气</span>
+              <span class="keyword-tag">自由</span>
+            </div>
+            <div class="fortune-message" id="fortuneMessage">今日阳光明媚，好运如影随形，大胆追逐你的梦想吧！</div>
+            <div class="fortune-score-section">
+              <div class="fortune-score-label">运势指数</div>
+              <div class="fortune-score-bar-bg">
+                <div class="fortune-score-bar" id="fortuneScoreBar"></div>
+              </div>
+              <div class="fortune-score-value" id="fortuneScore">78</div>
+            </div>
+          </div>
         </div>
       </article>
 
@@ -540,6 +580,35 @@
       }
       renderAQI(data.air_quality);
       renderHourly(data.hourly);
+      renderFortune(data.fortune);
+    }
+
+    function renderFortune(fortune){
+      const card = $("fortuneCard");
+      if(!fortune){
+        card.style.display = "none";
+        return;
+      }
+      card.style.display = "block";
+      
+      $("fortuneCardName").textContent = fortune.card;
+      $("fortuneCardEn").textContent = fortune.card_en;
+      $("fortuneMeaning").textContent = fortune.meaning;
+      $("fortuneMessage").textContent = fortune.message;
+      $("fortuneScore").textContent = fortune.luck_score;
+      
+      const keywordsEl = $("fortuneKeywords");
+      keywordsEl.innerHTML = fortune.keywords.map(k => `<span class="keyword-tag">${k}</span>`).join("");
+      
+      const scoreBar = $("fortuneScoreBar");
+      scoreBar.style.width = fortune.luck_score + "%";
+      
+      let scoreColor = "#35d39d";
+      if(fortune.luck_score >= 80) scoreColor = "#f59e0b";
+      else if(fortune.luck_score >= 60) scoreColor = "#35d39d";
+      else if(fortune.luck_score >= 40) scoreColor = "#f59e0b";
+      else scoreColor = "#ef4444";
+      scoreBar.style.background = scoreColor;
     }
 
     async function fetchWeather(city, options = {}){
