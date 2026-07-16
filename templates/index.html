@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>天气预报</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,16 +26,21 @@
 
     *{ box-sizing:border-box; margin:0; padding:0; }
 
-    html,body{ width:100%; min-height:100%; -webkit-tap-highlight-color:transparent; }
-
+    html{ width:100%; height:100%; overflow:hidden; -webkit-tap-highlight-color:transparent; }
     body{
-      min-height:100vh;
+      width:100%;
+      height:100%;
+      overflow-y:auto;
       overflow-x:hidden;
+      -webkit-overflow-scrolling:touch;
       color:var(--text);
       font-family:Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
       font-weight:400;
       background:#174ea6;
       transition:background .6s ease;
+      position:fixed;
+      top:0;
+      left:0;
     }
 
     body[data-theme="sunny"]{ --bg1:#91dbff; --bg2:#247cff; --bg3:#0b45a4; --card:rgba(255,255,255,.17); }
