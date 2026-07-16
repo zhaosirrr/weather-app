@@ -75,7 +75,7 @@
     .app{
       width:min(100%, 980px); margin:0 auto;
       min-height:100vh;
-      padding:calc(80px + env(safe-area-inset-top, 0px)) 16px 40px;
+      padding:calc(10px + env(safe-area-inset-top, 0px)) 16px 40px;
     }
 
     .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
@@ -257,15 +257,6 @@
         </button>
       </form>
     </header>
-
-    <section class="hero" aria-label="当前天气概览">
-      <h1 class="city-name" id="cityName">—</h1>
-      <div class="temp-row" id="tempRow">
-        <span class="temp-display">—°</span>
-      </div>
-      <div class="hi-lo" id="todayHiLo">H: --°  L: --°</div>
-      <div class="hero-advice" id="heroAdvice">正在获取天气与出行建议</div>
-    </section>
 
     <div id="status" class="status"></div>
 
@@ -519,12 +510,7 @@
       const theme = pickTheme(condText);
       const temp = data.current?.temp_c;
       const forecast = Array.isArray(data.forecast) ? data.forecast : [];
-      const today = forecast[0];
 
-      $("cityName").textContent = data.city || "—";
-      $("tempRow").innerHTML = temp != null ? `<span class="temp-num">${Math.round(temp)}</span><span class="temp-degree">°</span>` : `<span class="temp-num">--</span><span class="temp-degree">°</span>`;
-      $("todayHiLo").innerHTML = today ? `<span>${Math.round(today.maxtemp_c ?? 0)}°</span><span class="sep">/</span><span class="low">${Math.round(today.mintemp_c ?? 0)}°</span>` : `<span>--°</span><span class="sep">/</span><span class="low">--°</span>`;
-      $("heroAdvice").textContent = `${makeAdvice(theme, temp)} · ${condText}`;
       $("feelsLike").textContent = (data.current?.feelslike_c != null ? Math.round(data.current.feelslike_c) : "--") + "°";
       $("humidity").textContent = (data.current?.humidity ?? "--") + "%";
       $("wind").textContent = data.current?.wind_kph != null ? Math.round(data.current.wind_kph) : "--";
