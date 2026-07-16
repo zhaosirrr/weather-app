@@ -693,7 +693,23 @@
           if(timeoutFired) return;
           const msg = getLocationErrorMessage(err.code);
           setStatus("error", msg);
-          fallbackToDefault();
+          requestIPLocation().then((ipCity) => {
+            if(ipCity){
+              fetchWeather(ipCity, { fromLocation:true }).then((ok) => {
+                if(!ok){
+                  setStatus("error", "IP定位城市查询失败，请手动搜索");
+                  fallbackToDefault();
+                }
+              }).catch(() => {
+                setStatus("error", "网络请求失败，请手动搜索");
+                fallbackToDefault();
+              });
+            }else{
+              fallbackToDefault();
+            }
+          }).catch(() => {
+            fallbackToDefault();
+          });
         },
         { enableHighAccuracy:true, timeout:10000, maximumAge:0 }
       );
