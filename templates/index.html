@@ -43,14 +43,13 @@
     body[data-time="night"]{ --bg1:#254278; --bg2:#132a59; --bg3:#050a1c; --card:rgba(255,255,255,.12); }
 
     .sky{
-      position:fixed; inset:-50%; z-index:0; pointer-events:none; overflow:hidden;
+      position:fixed; inset:-100%; z-index:0; pointer-events:none; overflow:hidden;
       background:
         radial-gradient(900px 620px at 50% -10%, rgba(255,255,255,.38), transparent 58%),
         radial-gradient(620px 420px at 12% 22%, rgba(255,255,255,.16), transparent 62%),
         radial-gradient(780px 580px at 90% 28%, rgba(131,216,255,.22), transparent 58%),
         linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 42%, var(--bg3) 100%);
       transition:background .8s ease;
-      will-change:transform;
     }
     .sky::before{
       content:""; position:absolute; inset:-20%;
@@ -76,7 +75,7 @@
     .app{
       width:min(100%, 980px); margin:0 auto;
       min-height:100vh;
-      padding:16px;
+      padding:calc(80px + env(safe-area-inset-top, 0px)) 16px 40px;
     }
 
     .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
