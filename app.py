@@ -92,6 +92,102 @@ CITY_NAME_MAP = {
     "乌鲁木齐": "Urumqi",
 }
 
+ENGLISH_TO_CHINESE_MAP = {
+    "Beijing": "北京市",
+    "Shanghai": "上海市",
+    "Guangzhou": "广州市",
+    "Shenzhen": "深圳市",
+    "Hangzhou": "杭州市",
+    "Chengdu": "成都市",
+    "Nanjing": "南京市",
+    "Wuhan": "武汉市",
+    "Xian": "西安市",
+    "Chongqing": "重庆市",
+    "Tianjin": "天津市",
+    "Suzhou": "苏州市",
+    "Changsha": "长沙市",
+    "Zhengzhou": "郑州市",
+    "Qingdao": "青岛市",
+    "Xiamen": "厦门市",
+    "Dalian": "大连市",
+    "Shenyang": "沈阳市",
+    "Harbin": "哈尔滨市",
+    "Fuzhou": "福州市",
+    "Nanning": "南宁市",
+    "Kunming": "昆明市",
+    "Guiyang": "贵阳市",
+    "Lanzhou": "兰州市",
+    "Yinchuan": "银川市",
+    "Xining": "西宁市",
+    "Urumqi": "乌鲁木齐市",
+    "Hohhot": "呼和浩特市",
+    "Lhasa": "拉萨市",
+    "Haikou": "海口市",
+    "Zhuhai": "珠海市",
+    "Dongguan": "东莞市",
+    "Foshan": "佛山市",
+    "Zhongshan": "中山市",
+    "Huizhou": "惠州市",
+    "Ningbo": "宁波市",
+    "Wuxi": "无锡市",
+    "Changzhou": "常州市",
+    "Nantong": "南通市",
+    "Xuzhou": "徐州市",
+    "Wenzhou": "温州市",
+    "Shaoxing": "绍兴市",
+    "Jiaxing": "嘉兴市",
+    "Huzhou": "湖州市",
+    "Taizhou": "台州市",
+    "Jinhua": "金华市",
+    "Quzhou": "衢州市",
+    "Lishui": "丽水市",
+    "Zhoushan": "舟山市",
+    "Shijiazhuang": "石家庄市",
+    "Taiyuan": "太原市",
+    "Changchun": "长春市",
+    "Hefei": "合肥市",
+    "Nanchang": "南昌市",
+    "Jinan": "济南市",
+    "Shanghaishih": "上海市",
+}
+
+AREA_TO_CITY_MAP = {
+    "Meilong": "上海市",
+    "Pudong": "上海市",
+    "Xuhui": "上海市",
+    "Jing'an": "上海市",
+    "Changning": "上海市",
+    "Hongkou": "上海市",
+    "Yangpu": "上海市",
+    "Huangpu": "上海市",
+    "Putuo": "上海市",
+    "Baoshan": "上海市",
+    "Minhang": "上海市",
+    "Jiading": "上海市",
+    "Qingpu": "上海市",
+    "Songjiang": "上海市",
+    "Jinshan": "上海市",
+    "Fengxian": "上海市",
+    "Chongming": "上海市",
+    "Beijing Shi": "北京市",
+    "Dongcheng": "北京市",
+    "Xicheng": "北京市",
+    "Chaoyang": "北京市",
+    "Haidian": "北京市",
+    "Fengtai": "北京市",
+    "Shijingshan": "北京市",
+    "Mentougou": "北京市",
+    "Fangshan": "北京市",
+    "Tongzhou": "北京市",
+    "Shunyi": "北京市",
+    "Changping": "北京市",
+    "Daxing": "北京市",
+    "Huairou": "北京市",
+    "Pinggu": "北京市",
+    "Miyun": "北京市",
+    "Yanqing": "北京市",
+}
+
 
 def get_api_key() -> str:
     return os.getenv("WEATHERAPI_KEY", DEFAULT_API_KEY).strip()
@@ -99,6 +195,36 @@ def get_api_key() -> str:
 
 def translate_city_name(city: str) -> str:
     return CITY_NAME_MAP.get(city, city)
+
+
+def get_chinese_city_name(city: str) -> str:
+    if not city:
+        return city
+    
+    city_upper = city.strip()
+    
+    if city_upper in ENGLISH_TO_CHINESE_MAP:
+        return ENGLISH_TO_CHINESE_MAP[city_upper]
+    
+    if city_upper in AREA_TO_CITY_MAP:
+        return AREA_TO_CITY_MAP[city_upper]
+    
+    city_base = city_upper.split()[0]
+    if city_base in ENGLISH_TO_CHINESE_MAP:
+        return ENGLISH_TO_CHINESE_MAP[city_base]
+    
+    if city_base in AREA_TO_CITY_MAP:
+        return AREA_TO_CITY_MAP[city_base]
+    
+    for area, chinese_city in AREA_TO_CITY_MAP.items():
+        if area.lower() in city_upper.lower():
+            return chinese_city
+    
+    for eng, chinese_city in ENGLISH_TO_CHINESE_MAP.items():
+        if eng.lower() in city_upper.lower():
+            return chinese_city
+    
+    return city
 
 
 @app.get("/")
@@ -384,10 +510,12 @@ def api_weather():
             "us_epa_index": epa_index,  # 1-6
         }
 
-    # 组装前端需要的最小数据
+    city_name = location.get("name") or city
+    chinese_city_name = get_chinese_city_name(city_name)
+    
     result = {
         "ok": True,
-        "city": location.get("name") or city,
+        "city": chinese_city_name,
         "country": location.get("country"),
         "region": location.get("region"),
         "localtime": location.get("localtime"),
