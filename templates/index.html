@@ -3,10 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#174ea6" />
+  <meta name="theme-color" content="transparent" />
+  <meta name="msapplication-navbutton-color" content="transparent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="transparent" />
-  <title>天气预报</title>
+  <title>BeforeGo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -39,8 +41,7 @@
       color:var(--text);
       font-family:Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
       font-weight:400;
-      background:#174ea6;
-      transition:background .6s ease;
+      background:transparent;
       position:fixed;
       top:0;
       left:0;
@@ -55,7 +56,7 @@
     body[data-time="night"]{ --bg1:#254278; --bg2:#132a59; --bg3:#050a1c; --card:rgba(255,255,255,.12); }
 
     .sky{
-      position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+      position:fixed; inset:-50%; z-index:0; pointer-events:none; overflow:hidden;
       background:
         radial-gradient(900px 620px at 50% -10%, rgba(255,255,255,.38), transparent 58%),
         radial-gradient(620px 420px at 12% 22%, rgba(255,255,255,.16), transparent 62%),
@@ -86,16 +87,16 @@
 
     .app{
       position:relative; z-index:2; width:min(100%, 980px); margin:0 auto;
-      min-height:100vh; padding:calc(8px + env(safe-area-inset-top, 0px)) 16px calc(16px + var(--safe-bottom));
+      min-height:100vh; padding:calc(env(safe-area-inset-top, 0px)) 16px calc(var(--safe-bottom));
     }
 
     .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
     .location-section{ display:flex; align-items:center; gap:8px; }
     .location-status{
       display:inline-flex; align-items:center; gap:6px; min-height:36px;
-      padding:8px 14px; border:1px solid rgba(255,255,255,.12); border-radius:999px;
-      background:rgba(255,255,255,.06); color:rgba(255,255,255,.82); font-size:14px; font-weight:500;
-      backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+      padding:8px 14px; border:1px solid rgba(255,255,255,.08); border-radius:999px;
+      background:rgba(255,255,255,.03); color:rgba(255,255,255,.82); font-size:14px; font-weight:500;
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;
     }
     .location-status.loading{
@@ -112,7 +113,7 @@
     }
     @keyframes spin{ to{ transform:rotate(360deg); } }
     .refresh-btn{
-      width:32px; height:32px; border:0; border-radius:50%; background:rgba(255,255,255,.08);
+      width:32px; height:32px; border:0; border-radius:50%; background:rgba(255,255,255,.03);
       color:rgba(255,255,255,.85); display:grid; place-items:center; cursor:pointer;
       transition:transform .18s ease, background .18s ease;
       backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
@@ -121,8 +122,8 @@
     .refresh-btn:active{ transform:rotate(90deg) scale(.95); }
     .search-bar{
       width:min(42vw, 280px); min-width:190px; height:40px; display:flex; align-items:center; gap:7px;
-      padding:0 12px 0 15px; border-radius:999px; border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.06); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+      padding:0 12px 0 15px; border-radius:999px; border:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.03); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
     }
     .search-bar input{ flex:1; min-width:0; height:100%; border:0; outline:0; background:transparent; color:var(--text); font-size:15px; font-weight:500; }
     .search-bar input::placeholder{ color:rgba(255,255,255,.45); }
@@ -147,11 +148,11 @@
 
     .sheet{ display:grid; gap:12px; }
     .glass-card{
-      position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.08); border-radius:var(--radius);
-      background:linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      backdrop-filter:blur(18px) saturate(110%); -webkit-backdrop-filter:blur(18px) saturate(110%);
+      position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.04); border-radius:var(--radius);
+      background:linear-gradient(145deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      backdrop-filter:blur(12px) saturate(105%); -webkit-backdrop-filter:blur(12px) saturate(105%);
     }
-    .glass-card::before{ content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.08), transparent 30%); opacity:.5; }
+    .glass-card::before{ content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.03), transparent 30%); opacity:.3; }
     .card-inner{ position:relative; padding:18px; }
     .card-title{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px; color:rgba(255,255,255,.62); font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
     .card-title span:first-child{ display:inline-flex; align-items:center; gap:7px; }
@@ -212,13 +213,9 @@
     .fortune-score-bar{ height:100%; border-radius:999px; transition:width .6s ease, background .3s ease; }
     .fortune-score-value{ font-size:18px; font-weight:700; color:rgba(255,255,255,.92); min-width:40px; text-align:right; }
 
-    .mini-summary{ min-height:100%; display:flex; flex-direction:column; justify-content:space-between; gap:18px; }
-    .summary-main{ display:flex; align-items:center; gap:15px; }
-    .summary-emoji{ font-size:54px; filter:drop-shadow(0 10px 20px rgba(0,0,0,.18)); }
-    .summary-text{ color:rgba(255,255,255,.82); font-size:15px; line-height:1.55; }
-    .generated{ color:rgba(255,255,255,.46); font-size:12px; }
 
-    footer{ padding:18px 0 4px; text-align:center; color:rgba(255,255,255,.38); font-size:11px; }
+
+    footer{ padding:8px 0 4px; text-align:center; color:rgba(255,255,255,.25); font-size:10px; }
 
     @media (max-width:760px){
       .app{ padding-left:12px; padding-right:12px; }
@@ -285,16 +282,30 @@
     <div id="status" class="status"></div>
 
     <section class="sheet">
-      <article class="glass-card">
-        <div class="card-inner mini-summary">
-          <div class="card-title"><span><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> 天气摘要</span></div>
-            <div class="summary-main">
-              <div class="summary-emoji" id="sideEmoji">🌤️</div>
-              <div class="summary-text" id="miniText">允许定位后自动显示本地天气，也可以搜索任意城市。</div>
+      <article class="glass-card" id="beforeGoCard">
+        <div class="card-inner">
+          <div class="card-title"><span><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Before Go</span></div>
+          <div class="fortune-content">
+            <div class="fortune-card-info">
+              <div class="fortune-card-name" id="fortuneCardName">愚人</div>
+              <div class="fortune-card-en" id="fortuneCardEn">The Fool</div>
             </div>
-            <div class="generated" id="generatedAt"></div>
+            <div class="fortune-keywords" id="fortuneKeywords">
+              <span class="keyword-tag">新起点</span>
+              <span class="keyword-tag">勇气</span>
+              <span class="keyword-tag">自由</span>
+            </div>
+            <div class="fortune-message" id="fortuneMessage">今日阳光明媚，好运如影随形，大胆追逐你的梦想吧！</div>
+            <div class="fortune-score-section">
+              <div class="fortune-score-label">运势指数</div>
+              <div class="fortune-score-bar-bg">
+                <div class="fortune-score-bar" id="fortuneScoreBar"></div>
+              </div>
+              <div class="fortune-score-value" id="fortuneScore">78</div>
+            </div>
           </div>
-        </article>
+        </div>
+      </article>
 
       <article class="glass-card" id="hourlyCard">
         <div class="card-inner">
@@ -303,18 +314,6 @@
             <div class="h-item active"><div class="ht">现在</div><div class="he">🌤️</div><div class="hd">--</div><div class="hr"></div></div>
             <div class="h-item"><div class="ht">1小时</div><div class="he">⛅</div><div class="hd">--</div><div class="hr"></div></div>
             <div class="h-item"><div class="ht">2小时</div><div class="he">☀️</div><div class="hd">--</div><div class="hr"></div></div>
-          </div>
-        </div>
-      </article>
-
-      <article class="glass-card">
-        <div class="card-inner">
-          <div class="card-title"><span><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> 今日详情</span><span id="todayBadge" class="badge" style="display:none">实时</span></div>
-          <div class="overview-grid">
-            <div class="metric"><div class="label">体感温度</div><div class="val" id="feelsLike">--°</div><div class="hint">Feels like</div></div>
-            <div class="metric"><div class="label">湿度</div><div class="val" id="humidity">--%</div><div class="hint">Humidity</div></div>
-            <div class="metric"><div class="label">风速</div><div class="val" id="wind">--</div><div class="hint">km/h</div></div>
-            <div class="metric"><div class="label">出行建议</div><div class="val" id="advice">—</div><div class="hint">Today</div></div>
           </div>
         </div>
       </article>
@@ -334,28 +333,14 @@
         </div>
       </article>
 
-      <article class="glass-card" id="fortuneCard" style="display:none;">
+      <article class="glass-card">
         <div class="card-inner">
-          <div class="card-title"><span><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 今日运势</span></div>
-          <div class="fortune-content">
-            <div class="fortune-card-info">
-              <div class="fortune-card-name" id="fortuneCardName">愚人</div>
-              <div class="fortune-card-en" id="fortuneCardEn">The Fool</div>
-            </div>
-            <div class="fortune-meaning" id="fortuneMeaning">新的开始、冒险、纯真</div>
-            <div class="fortune-keywords" id="fortuneKeywords">
-              <span class="keyword-tag">新起点</span>
-              <span class="keyword-tag">勇气</span>
-              <span class="keyword-tag">自由</span>
-            </div>
-            <div class="fortune-message" id="fortuneMessage">今日阳光明媚，好运如影随形，大胆追逐你的梦想吧！</div>
-            <div class="fortune-score-section">
-              <div class="fortune-score-label">运势指数</div>
-              <div class="fortune-score-bar-bg">
-                <div class="fortune-score-bar" id="fortuneScoreBar"></div>
-              </div>
-              <div class="fortune-score-value" id="fortuneScore">78</div>
-            </div>
+          <div class="card-title"><span><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> 今日详情</span><span id="todayBadge" class="badge" style="display:none">实时</span></div>
+          <div class="overview-grid">
+            <div class="metric"><div class="label">体感温度</div><div class="val" id="feelsLike">--°</div><div class="hint">Feels like</div></div>
+            <div class="metric"><div class="label">湿度</div><div class="val" id="humidity">--%</div><div class="hint">Humidity</div></div>
+            <div class="metric"><div class="label">风速</div><div class="val" id="wind">--</div><div class="hint">km/h</div></div>
+            <div class="metric"><div class="label">出行建议</div><div class="val" id="advice">—</div><div class="hint">Today</div></div>
           </div>
         </div>
       </article>
@@ -552,13 +537,10 @@
       $("tempRow").innerHTML = temp != null ? `<span class="temp-num">${Math.round(temp)}</span><span class="temp-degree">°</span>` : `<span class="temp-num">--</span><span class="temp-degree">°</span>`;
       $("todayHiLo").innerHTML = today ? `<span>${Math.round(today.maxtemp_c ?? 0)}°</span><span class="sep">/</span><span class="low">${Math.round(today.mintemp_c ?? 0)}°</span>` : `<span>--°</span><span class="sep">/</span><span class="low">--°</span>`;
       $("heroAdvice").textContent = `${makeAdvice(theme, temp)} · ${condText}`;
-      $("sideEmoji").textContent = pickEmoji(condText);
       $("feelsLike").textContent = (data.current?.feelslike_c != null ? Math.round(data.current.feelslike_c) : "--") + "°";
       $("humidity").textContent = (data.current?.humidity ?? "--") + "%";
       $("wind").textContent = data.current?.wind_kph != null ? Math.round(data.current.wind_kph) : "--";
       $("advice").textContent = makeAdvice(theme, temp);
-      $("miniText").textContent = `${condText}，${temp ?? "--"}°C。${makeAdvice(theme, temp)}，愿你今天有个好心情。`;
-      $("generatedAt").textContent = data.localtime ? `当地时间 ${data.localtime}` : "";
       $("todayBadge").style.display = "inline-flex";
       setTheme(theme, data.localtime);
 
@@ -581,7 +563,7 @@
     }
 
     function renderFortune(fortune){
-      const card = $("fortuneCard");
+      const card = $("beforeGoCard");
       if(!fortune){
         card.style.display = "none";
         return;
