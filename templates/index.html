@@ -2,12 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="transparent" />
-  <meta name="msapplication-navbutton-color" content="transparent" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="transparent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
   <title>BeforeGo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,10 +26,8 @@
 
     *{ box-sizing:border-box; margin:0; padding:0; }
 
-    html{ width:100%; height:100%; -webkit-tap-highlight-color:transparent; }
+    html{ -webkit-tap-highlight-color:transparent; }
     body{
-      width:100%;
-      min-height:100%;
       color:var(--text);
       font-family:Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
       font-weight:400;
@@ -82,8 +75,8 @@
 
     .app{
       width:min(100%, 980px); margin:0 auto;
-      min-height:100vh; padding:calc(env(safe-area-inset-top, 0px)) 16px calc(var(--safe-bottom));
-      padding-bottom:calc(20px + var(--safe-bottom));
+      min-height:100vh;
+      padding:16px;
     }
 
     .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
