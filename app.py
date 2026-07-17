@@ -741,19 +741,39 @@ def reverse_geocode(lat, lon):
             if data.get("status") == "1" and data.get("regeocode"):
                 regeocode = data["regeocode"]
                 address_component = regeocode.get("addressComponent", {})
-                city = address_component.get("city")
+                
                 province = address_component.get("province")
+                city = address_component.get("city")
+                district = address_component.get("district")
+                street = address_component.get("street")
+                township = address_component.get("township")
                 
-                if not city and province:
-                    city = province
+                location_parts = []
                 
-                for city_key, coords in CITY_COORDS.items():
-                    if coords["province"] == province and city_key in city:
-                        city = city_key
-                        break
+                if city and city != province:
+                    location_parts.append(city)
+                
+                if district and district != city:
+                    location_parts.append(district)
+                
+                if township and township not in location_parts:
+                    location_parts.append(township)
+                
+                if street:
+                    location_parts.append(street)
+                
+                if not location_parts:
+                    if province:
+                        location_parts.append(province)
+                    elif city:
+                        location_parts.append(city)
+                    else:
+                        return {"city": "未知位置", "province": province}
+                
+                full_location = "".join(location_parts)
                 
                 return {
-                    "city": city or "未知城市",
+                    "city": full_location,
                     "province": province,
                 }
     except requests.RequestException:
