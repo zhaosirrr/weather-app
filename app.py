@@ -727,8 +727,8 @@ def get_weather_by_coords(lat, lon):
             params={
                 "latitude": lat,
                 "longitude": lon,
-                "current": "temperature_2m,apparent_temperature,humidity_2m,wind_speed_10m,weather_code,is_day",
-                "hourly": "temperature_2m,weather_code,wind_speed_10m,humidity_2m,precipitation_probability",
+                "current": "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day",
+                "hourly": "temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m,precipitation_probability",
                 "daily": "weather_code,temperature_2m_max,temperature_2m_min",
                 "forecast_days": 8,
                 "timezone": "Asia/Shanghai",
@@ -813,7 +813,7 @@ def aqi_to_epa_index(aqi):
         return 6
 
 
-@ app.get("/api/weather")
+@app.get("/api/weather")
 def api_weather():
     city = (request.args.get("city") or "").strip()
     if not city:
@@ -877,7 +877,7 @@ def api_weather():
         "current": {
             "temp_c": current.get("temperature_2m"),
             "feelslike_c": current.get("apparent_temperature"),
-            "humidity": current.get("humidity_2m"),
+            "humidity": current.get("relative_humidity_2m"),
             "wind_kph": current.get("wind_speed_10m"),
             "is_day": current.get("is_day"),
             "condition": {
@@ -917,7 +917,7 @@ def api_weather():
             h_condition_code = hourly.get("weather_code", [])[i]
             h_condition = get_weather_condition(h_condition_code)
             wind = hourly.get("wind_speed_10m", [])[i]
-            humidity = hourly.get("humidity_2m", [])[i]
+            humidity = hourly.get("relative_humidity_2m", [])[i]
             rain_chance = hourly.get("precipitation_probability", [])[i]
             result["hourly"].append({
                 "time": time_str.replace("T", " "),
