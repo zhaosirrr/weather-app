@@ -144,7 +144,7 @@
     .card-inner{ position:relative; padding:18px; }
     .card-title{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px; color:rgba(255,255,255,.62); font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
     .card-title span:first-child{ display:inline-flex; align-items:center; gap:7px; }
-    .card-title .icon{ flex-shrink:0; opacity:.85; }
+    .card-title .icon{ flex-shrink:0; opacity:.85; vertical-align:middle; }
     .badge{ display:inline-flex; align-items:center; gap:5px; padding:5px 10px; border-radius:99px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.13); color:rgba(255,255,255,.72); font-size:12px; letter-spacing:0; text-transform:none; }
 
     .hourly-scroll{ display:flex; gap:8px; overflow-x:auto; padding:1px 1px 4px; scroll-snap-type:x proximity; -ms-overflow-style:none; scrollbar-width:none; cursor:grab; user-select:none; }
@@ -273,7 +273,7 @@
     <section class="sheet">
       <article class="glass-card" id="beforeGoCard">
         <div class="card-inner">
-          <div class="card-title"><span><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> 今日运势</span></div>
+          <div class="card-title"><span><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 今日运势</span></div>
           <div class="fortune-content">
             <div class="fortune-card-info">
               <div class="fortune-card-name" id="fortuneCardName">愚人</div>
