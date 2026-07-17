@@ -605,7 +605,80 @@ def api_location():
     return jsonify({"ok": False, "message": "无法识别当前城市"}), 404
 
 
+CITY_COORDS = {
+    "北京": {"lat": 39.9042, "lon": 116.4074, "province": "北京市"},
+    "北京市": {"lat": 39.9042, "lon": 116.4074, "province": "北京市"},
+    "上海": {"lat": 31.2304, "lon": 121.4737, "province": "上海市"},
+    "上海市": {"lat": 31.2304, "lon": 121.4737, "province": "上海市"},
+    "广州": {"lat": 23.1291, "lon": 113.2644, "province": "广东省"},
+    "广州市": {"lat": 23.1291, "lon": 113.2644, "province": "广东省"},
+    "深圳": {"lat": 22.5431, "lon": 114.0579, "province": "广东省"},
+    "深圳市": {"lat": 22.5431, "lon": 114.0579, "province": "广东省"},
+    "杭州": {"lat": 30.2741, "lon": 120.1551, "province": "浙江省"},
+    "杭州市": {"lat": 30.2741, "lon": 120.1551, "province": "浙江省"},
+    "成都": {"lat": 30.5728, "lon": 104.0668, "province": "四川省"},
+    "成都市": {"lat": 30.5728, "lon": 104.0668, "province": "四川省"},
+    "南京": {"lat": 32.0603, "lon": 118.7969, "province": "江苏省"},
+    "南京市": {"lat": 32.0603, "lon": 118.7969, "province": "江苏省"},
+    "武汉": {"lat": 30.5928, "lon": 114.3055, "province": "湖北省"},
+    "武汉市": {"lat": 30.5928, "lon": 114.3055, "province": "湖北省"},
+    "西安": {"lat": 34.3416, "lon": 108.9398, "province": "陕西省"},
+    "西安市": {"lat": 34.3416, "lon": 108.9398, "province": "陕西省"},
+    "重庆": {"lat": 29.4316, "lon": 106.9123, "province": "重庆市"},
+    "重庆市": {"lat": 29.4316, "lon": 106.9123, "province": "重庆市"},
+    "天津": {"lat": 39.0842, "lon": 117.2009, "province": "天津市"},
+    "天津市": {"lat": 39.0842, "lon": 117.2009, "province": "天津市"},
+    "苏州": {"lat": 31.2990, "lon": 120.5853, "province": "江苏省"},
+    "苏州市": {"lat": 31.2990, "lon": 120.5853, "province": "江苏省"},
+    "长沙": {"lat": 28.2280, "lon": 112.9388, "province": "湖南省"},
+    "长沙市": {"lat": 28.2280, "lon": 112.9388, "province": "湖南省"},
+    "郑州": {"lat": 34.7466, "lon": 113.6253, "province": "河南省"},
+    "郑州市": {"lat": 34.7466, "lon": 113.6253, "province": "河南省"},
+    "青岛": {"lat": 36.0671, "lon": 120.3826, "province": "山东省"},
+    "青岛市": {"lat": 36.0671, "lon": 120.3826, "province": "山东省"},
+    "厦门": {"lat": 24.4798, "lon": 118.0894, "province": "福建省"},
+    "厦门市": {"lat": 24.4798, "lon": 118.0894, "province": "福建省"},
+    "大连": {"lat": 38.9140, "lon": 121.6147, "province": "辽宁省"},
+    "大连市": {"lat": 38.9140, "lon": 121.6147, "province": "辽宁省"},
+    "沈阳": {"lat": 41.8057, "lon": 123.4315, "province": "辽宁省"},
+    "沈阳市": {"lat": 41.8057, "lon": 123.4315, "province": "辽宁省"},
+    "哈尔滨": {"lat": 45.8038, "lon": 126.5349, "province": "黑龙江省"},
+    "哈尔滨市": {"lat": 45.8038, "lon": 126.5349, "province": "黑龙江省"},
+    "福州": {"lat": 26.0745, "lon": 119.2965, "province": "福建省"},
+    "福州市": {"lat": 26.0745, "lon": 119.2965, "province": "福建省"},
+    "南宁": {"lat": 22.8170, "lon": 108.3665, "province": "广西壮族自治区"},
+    "南宁市": {"lat": 22.8170, "lon": 108.3665, "province": "广西壮族自治区"},
+    "昆明": {"lat": 24.8820, "lon": 102.8329, "province": "云南省"},
+    "昆明市": {"lat": 24.8820, "lon": 102.8329, "province": "云南省"},
+    "贵阳": {"lat": 26.6476, "lon": 106.6303, "province": "贵州省"},
+    "贵阳市": {"lat": 26.6476, "lon": 106.6303, "province": "贵州省"},
+    "兰州": {"lat": 36.0611, "lon": 103.8343, "province": "甘肃省"},
+    "兰州市": {"lat": 36.0611, "lon": 103.8343, "province": "甘肃省"},
+    "银川": {"lat": 38.4871, "lon": 106.2307, "province": "宁夏回族自治区"},
+    "银川市": {"lat": 38.4871, "lon": 106.2307, "province": "宁夏回族自治区"},
+    "西宁": {"lat": 36.6171, "lon": 101.7782, "province": "青海省"},
+    "西宁市": {"lat": 36.6171, "lon": 101.7782, "province": "青海省"},
+    "乌鲁木齐": {"lat": 43.8256, "lon": 87.6168, "province": "新疆维吾尔自治区"},
+    "乌鲁木齐市": {"lat": 43.8256, "lon": 87.6168, "province": "新疆维吾尔自治区"},
+    "呼和浩特": {"lat": 40.8423, "lon": 111.7510, "province": "内蒙古自治区"},
+    "呼和浩特市": {"lat": 40.8423, "lon": 111.7510, "province": "内蒙古自治区"},
+    "拉萨": {"lat": 29.6540, "lon": 91.1765, "province": "西藏自治区"},
+    "拉萨市": {"lat": 29.6540, "lon": 91.1765, "province": "西藏自治区"},
+    "海口": {"lat": 20.0440, "lon": 110.2242, "province": "海南省"},
+    "海口市": {"lat": 20.0440, "lon": 110.2242, "province": "海南省"},
+}
+
+
 def geocode_city(city_name):
+    if city_name in CITY_COORDS:
+        coords = CITY_COORDS[city_name]
+        return {
+            "lat": coords["lat"],
+            "lon": coords["lon"],
+            "city": city_name,
+            "province": coords["province"],
+        }
+    
     amap_key = get_amap_key()
     if not amap_key or amap_key == "你的高德地图API Key":
         return None
@@ -634,6 +707,16 @@ def geocode_city(city_name):
                     }
     except requests.RequestException:
         pass
+    
+    for key, coords in CITY_COORDS.items():
+        if key in city_name or city_name in key:
+            return {
+                "lat": coords["lat"],
+                "lon": coords["lon"],
+                "city": key,
+                "province": coords["province"],
+            }
+    
     return None
 
 
