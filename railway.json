@@ -4,6 +4,7 @@
     "builder": "dockerfile"
   },
   "deploy": {
-    "startCommand": "gunicorn --bind 0.0.0.0:8000 app:app"
+    "startCommand": "bash -c 'gunicorn --bind 0.0.0.0:${PORT:-8000} app:app'",
+    "port": 8000
   }
 }
