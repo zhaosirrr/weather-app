@@ -821,7 +821,7 @@ def get_air_quality(lat, lon):
             params={
                 "latitude": lat,
                 "longitude": lon,
-                "current": "pm2_5,pm10,o3,no2,so2,co,aqi",
+                "current": "us_aqi",
                 "timezone": "Asia/Shanghai",
             },
             timeout=10,
@@ -934,11 +934,11 @@ def api_weather():
     aqi = {"value": None, "level": 1}
     if air_data and air_data.get("current"):
         aq = air_data["current"]
-        aqi_value = aq.get("aqi")
+        aqi_value = aq.get("us_aqi")
         aqi = {
             "value": aqi_value,
             "level": aqi_to_epa_index(aqi_value or 0),
-            "pm2_5": aq.get("pm2_5"),
+            "pm2_5": aq.get("pm25"),
             "pm10": aq.get("pm10"),
             "o3": aq.get("o3"),
             "no2": aq.get("no2"),
