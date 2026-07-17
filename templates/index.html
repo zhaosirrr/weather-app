@@ -260,6 +260,16 @@
 
     <div id="status" class="status"></div>
 
+    <section class="hero">
+      <div class="city-name" id="cityName">—</div>
+      <div class="temp-row">
+        <div class="temp-num" id="tempNum">--</div>
+        <div class="temp-degree">°</div>
+      </div>
+      <div class="hi-lo"><span id="hiTemp">--°</span><span class="sep">|</span><span class="low" id="loTemp">--°</span></div>
+      <div class="hero-advice" id="heroAdvice">—</div>
+    </section>
+
     <section class="sheet">
       <article class="glass-card" id="beforeGoCard">
         <div class="card-inner">
@@ -510,6 +520,14 @@
       const theme = pickTheme(condText);
       const temp = data.current?.temp_c;
       const forecast = Array.isArray(data.forecast) ? data.forecast : [];
+
+      $("cityName").textContent = data.city || "—";
+      $("tempNum").textContent = temp != null ? Math.round(temp) : "--";
+      
+      const todayForecast = forecast[0];
+      $("hiTemp").textContent = todayForecast?.maxtemp_c != null ? Math.round(todayForecast.maxtemp_c) + "°" : "--°";
+      $("loTemp").textContent = todayForecast?.mintemp_c != null ? Math.round(todayForecast.mintemp_c) + "°" : "--°";
+      $("heroAdvice").textContent = makeAdvice(theme, temp);
 
       $("feelsLike").textContent = (data.current?.feelslike_c != null ? Math.round(data.current.feelslike_c) : "--") + "°";
       $("humidity").textContent = (data.current?.humidity ?? "--") + "%";
