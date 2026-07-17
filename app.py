@@ -669,6 +669,17 @@ CITY_COORDS = {
 }
 
 
+def find_city_by_coords(lat, lon):
+    min_dist = float("inf")
+    closest_city = "未知城市"
+    for city, coords in CITY_COORDS.items():
+        dist = (lat - coords["lat"])**2 + (lon - coords["lon"])**2
+        if dist < min_dist:
+            min_dist = dist
+            closest_city = city
+    return closest_city
+
+
 def geocode_city(city_name):
     if city_name in CITY_COORDS:
         coords = CITY_COORDS[city_name]
@@ -905,6 +916,8 @@ def api_weather():
             if reverse_result:
                 city_name = reverse_result.get("city") or "未知城市"
                 province = reverse_result.get("province")
+            else:
+                city_name = find_city_by_coords(lat, lon)
         except ValueError:
             pass
 
