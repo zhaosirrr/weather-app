@@ -720,6 +720,47 @@ def geocode_city(city_name):
     return None
 
 
+def reverse_geocode(lat, lon):
+    amap_key = get_amap_key()
+    if not amap_key or amap_key == "你的高德地图API Key":
+        return None
+    
+    try:
+        resp = requests.get(
+            "https://restapi.amap.com/v3/geocode/regeo",
+            params={
+                "key": amap_key,
+                "location": f"{lon},{lat}",
+                "output": "JSON",
+                "extensions": "base",
+            },
+            timeout=5,
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get("status") == "1" and data.get("regeocode"):
+                regeocode = data["regeocode"]
+                address_component = regeocode.get("addressComponent", {})
+                city = address_component.get("city")
+                province = address_component.get("province")
+                
+                if not city and province:
+                    city = province
+                
+                for city_key, coords in CITY_COORDS.items():
+                    if coords["province"] == province and city_key in city:
+                        city = city_key
+                        break
+                
+                return {
+                    "city": city or "未知城市",
+                    "province": province,
+                }
+    except requests.RequestException:
+        pass
+    return None
+
+
 def get_weather_by_coords(lat, lon):
     try:
         resp = requests.get(
@@ -829,6 +870,11 @@ def api_weather():
             parts = city.split(",")
             lat = float(parts[0].strip())
             lon = float(parts[1].strip())
+            
+            reverse_result = reverse_geocode(lat, lon)
+            if reverse_result:
+                city_name = reverse_result.get("city") or "未知城市"
+                province = reverse_result.get("province")
         except ValueError:
             pass
 
