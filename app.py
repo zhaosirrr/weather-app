@@ -825,6 +825,24 @@ def get_weather_by_coords(lat, lon):
     return None
 
 
+def calc_china_aqi(pm2_5):
+    if pm2_5 is None:
+        return None, 1
+    pm2_5 = float(pm2_5)
+    if pm2_5 <= 35:
+        return round((pm2_5 / 35) * 50), 1
+    elif pm2_5 <= 75:
+        return 50 + round(((pm2_5 - 35) / 40) * 50), 2
+    elif pm2_5 <= 115:
+        return 100 + round(((pm2_5 - 75) / 40) * 50), 3
+    elif pm2_5 <= 150:
+        return 150 + round(((pm2_5 - 115) / 35) * 50), 4
+    elif pm2_5 <= 250:
+        return 200 + round(((pm2_5 - 150) / 100) * 100), 5
+    else:
+        return 300 + round(((pm2_5 - 250) / 150) * 100), 6
+
+
 def get_air_quality(lat, lon):
     try:
         resp = requests.get(
@@ -832,15 +850,24 @@ def get_air_quality(lat, lon):
             params={
                 "latitude": lat,
                 "longitude": lon,
-                "current": "us_aqi",
+                "current": "pm2_5",
                 "timezone": "Asia/Shanghai",
             },
             timeout=10,
         )
         if resp.status_code == 200:
-            return resp.json()
+            data = resp.json()
+            if data.get("current"):
+                pm2_5 = data["current"].get("pm2_5")
+                aqi_value, level = calc_china_aqi(pm2_5)
+                return {
+                    "aqi": aqi_value,
+                    "level": level,
+                    "pm2_5": pm2_5,
+                }
     except requests.RequestException:
         pass
+    
     return None
 
 
@@ -945,19 +972,15 @@ def api_weather():
     condition = get_weather_condition(condition_code)
 
     aqi = {"value": None, "level": 1}
-    if air_data and air_data.get("current"):
-        aq = air_data["current"]
-        aqi_value = aq.get("us_aqi")
-        aqi = {
-            "value": aqi_value,
-            "level": aqi_to_epa_index(aqi_value or 0),
-            "pm2_5": aq.get("pm25"),
-            "pm10": aq.get("pm10"),
-            "o3": aq.get("o3"),
-            "no2": aq.get("no2"),
-            "so2": aq.get("so2"),
-            "co": aq.get("co"),
-        }
+    if air_data:
+        aqi_value = air_data.get("aqi")
+        level = air_data.get("level", 1)
+        if aqi_value is not None:
+            aqi = {
+                "value": aqi_value,
+                "level": level,
+                "pm2_5": air_data.get("pm2_5"),
+            }
 
     result = {
         "ok": True,
