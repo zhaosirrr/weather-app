@@ -1770,14 +1770,15 @@ def get_tarot_fortune(weather_condition, temp, date_str):
 
     dim_center = 68 if orientation == "upright" else 42
     dimension_scores = {
-        "career_wealth": _bounded(dim_center + rng.randint(-14, 20)),
-        "love":          _bounded(dim_center + rng.randint(-14, 20)),
-        "social":        _bounded(dim_center + rng.randint(-14, 20)),
-        "health":        _bounded(dim_center + rng.randint(-14, 20)),
+        "career": _bounded(dim_center + rng.randint(-14, 20)),
+        "love":   _bounded(dim_center + rng.randint(-14, 20)),
+        "social": _bounded(dim_center + rng.randint(-14, 20)),
+        "wealth": _bounded(dim_center + rng.randint(-14, 20)),
+        "health": _bounded(dim_center + rng.randint(-14, 20)),
     }
 
-    dos = rng.sample(DAILY_DOS_POOL, 3)
-    donts = rng.sample(DAILY_DONTS_POOL, 3)
+    dos = sorted(rng.sample(DAILY_DOS_POOL, 2), key=DAILY_DOS_POOL.index)
+    donts = sorted(rng.sample(DAILY_DONTS_POOL, 2), key=DAILY_DONTS_POOL.index)
 
     return {
         "card": card["name"],
